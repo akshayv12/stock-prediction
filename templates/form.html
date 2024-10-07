@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Prediction</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            margin: 0;
+            padding: 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #16213e;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            text-align: center;
+            color: #00fff5;
+            margin-bottom: 30px;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px #00fff5;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            padding: 10px 15px;
+            border: 1px solid #00fff5;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 16px;
+            background-color: #0f3460;
+            color: #e0e0e0;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #00fff5;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #e94560;
+            box-shadow: 0 0 15px #e94560;
+        }
+        .result {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .result h2 {
+            color: #00fff5;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,255,245,0.3);
+        }
+        .decision-display {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .decision-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent, 
+                rgba(0, 255, 245, 0.3), 
+                transparent 30%
+            );
+            animation: rotate 4s linear infinite;
+        }
+        @keyframes rotate {
+            100% {
+                transform: rotate(1turn);
+            }
+        }
+        .decision-content {
+            position: relative;
+            z-index: 1;
+        }
+        .dominant-decision {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #00fff5, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(0, 255, 245, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 20px rgba(233, 69, 96, 0.8);
+            }
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(0, 255, 245, 0.5);
+            }
+        }
+        .percentage-bar {
+            background-color: #0a2647;
+            height: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+            position: relative;
+            font-family: poppins;
+        }
+        .percentage-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .percentage-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.1) 0%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.1) 100%
+            );
+            animation: shine 2s infinite linear;
+        }
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        .buy { background-color: #00ff00; }
+        .hold { background-color: #ffff00; }
+        .sell { background-color: #ff0000; }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #7f8c8d;
+        }
+        .error {
+            background-color: #e94560;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Prediction</h1>
+        <form method="POST">
+            <input type="text" name="ticker" placeholder="Enter Stock Ticker" required>
+            <input type="submit" value="Predict">
+        </form>
+
+        {% if error %}
+            <div class="error">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        {% if prediction %}
+            <div class="result">
+                <h2>{{ prediction }}</h2>
+                <h3>Main Graph</h3>
+                <img src="data:image/png;base64,{{ main_graph }}" alt="Main Stock Prediction Graph">
+                <h3>Next 7 Days Prediction Graph</h3>
+                <img src="data:image/png;base64,{{ next_7_days_graph }}" alt="Next 7 Days Prediction Graph">
+            </div>
+
+            <div class="decision-display">
+                <div class="decision-content">
+                    <h3>Dominant Decision for Next 7 Days:</h3>
+                    <div class="dominant-decision">
+                        {% set max_decision = [buy_percentage, hold_percentage, sell_percentage]|max %}
+                        {% if max_decision == buy_percentage %}
+                            BUY
+                        {% elif max_decision == hold_percentage %}
+                            HOLD
+                        {% else %}
+                            SELL
+                        {% endif %}
+                    </div>
+                    <p>Buy Percentage: {{ buy_percentage }}</p>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill buy" style="width: {{ buy_percentage|float }}%;"></div>
+                    </div>
+                    <p>Hold Percentage: {{ hold_percentage }}</p>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill hold" style="width: {{ hold_percentage|float }}%;"></div>
+                    </div>
+                    <p>Sell Percentage: {{ sell_percentage }}</p>
+                    <div class="percentage-bar">
+                        <div class="percentage-fill sell" style="width: {{ sell_percentage|float }}%;"></div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <footer>
+            <p>© 2024 Stock Prediction App | <a href="#">Privacy Policy</a></p>
+        </footer>
+    </div>
+</body>
+</html>
