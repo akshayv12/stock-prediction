@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 # Function to predict stock prices using an LSTM model
 def stock_prediction_and_analysis(ticker):
     # Step 1,2: Load and preprocess news headlines
-    filtered_df = pd.read_csv(r'D:\vs code\Mid_Sem_Project\data\headlines_sentiment.csv')
+    filtered_df = pd.read_csv(r'data\headlines_sentiment.csv')
     filtered_df['date'] = pd.to_datetime(filtered_df['date'])
     
     # Step 3: Download historical stock price data
